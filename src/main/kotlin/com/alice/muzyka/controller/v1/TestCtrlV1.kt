@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController 
-class TestControllerV1 {
+class TestCtrlV1 {
 
     @GetMapping("/test")
     fun getHelloWorld(): String {
