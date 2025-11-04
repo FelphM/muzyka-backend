@@ -5,7 +5,16 @@ spring:
   application:
     name: muzyka
 
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  jpa:
+    hibernate:
+      ddl-auto: update
+  
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: Admin
+    password: PanConPalta1@
+
+  # autoconfigure:
+  #   exclude:
+  #     - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+  #     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
