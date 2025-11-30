@@ -4,10 +4,14 @@ import com.alice.muzyka.entity.Product
 import com.alice.muzyka.exception.ConflictException
 import com.alice.muzyka.exception.NotFoundException
 import com.alice.muzyka.repository.ProductRepository
+import com.alice.muzyka.repository.CategoryRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ProductService(private val productRepository: ProductRepository) {
+class ProductService(
+    private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository
+) {
 
     fun getAllProducts(): List<Product> = productRepository.findAll()
 
@@ -20,12 +24,25 @@ class ProductService(private val productRepository: ProductRepository) {
         if (existingProduct != null) {
             throw ConflictException("Product with slug ${product.slug} already exists")
         }
-        return productRepository.save(product)
+
+        val category = product.category.id?.let {
+            categoryRepository.findById(it)
+                .orElseThrow { NotFoundException("Category with id ${product.category.id} not found") }
+        } ?: throw IllegalArgumentException("Category ID must not be null")
+
+
+        val newProduct = product.copy(category = category)
+        return productRepository.save(newProduct)
     }
 
     fun updateProduct(id: Long, product: Product): Product {
         val existingProduct = productRepository.findById(id)
             .orElseThrow { NotFoundException("Product with id $id not found") }
+
+        val category = product.category.id?.let {
+            categoryRepository.findById(it)
+                .orElseThrow { NotFoundException("Category with id ${product.category.id} not found") }
+        } ?: throw IllegalArgumentException("Category ID must not be null")
 
         val updatedProduct = existingProduct.copy(
             name = product.name,
@@ -35,7 +52,8 @@ class ProductService(private val productRepository: ProductRepository) {
             format = product.format,
             imageUrl = product.imageUrl,
             imageAlt = product.imageAlt,
-            slug = product.slug
+            slug = product.slug,
+            category = category
         )
         return productRepository.save(updatedProduct)
     }
