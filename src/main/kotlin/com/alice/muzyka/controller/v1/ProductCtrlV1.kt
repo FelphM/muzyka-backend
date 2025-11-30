@@ -1,39 +1,39 @@
 package com.alice.muzyka.controller.v1
 
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import com.alice.muzyka.entity.Product
+import com.alice.muzyka.service.ProductService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/product")
-class ProductCtrlV1 {
+@RequestMapping("/api/v1/products")
+class ProductCtrlV1(private val productService: ProductService) {
 
     @GetMapping
-    fun getAll() {}
+    fun getAllProducts(): List<Product> = productService.getAllProducts()
 
-    @GetMapping("/{id}")
-    fun getById(@PathVariable id: Int) {}
-
-    @GetMapping("/search")
-    fun getByParams(
-      @RequestParam(required= false) name: String?,
-      @RequestParam(required= false) category: String?,
-      @RequestParam(required= false) minPrice: Int?,
-      @RequestParam(required= false) maxPrice: Int?,
-    ) {}
+    @GetMapping("/{slug}")
+    fun getProductBySlug(@PathVariable slug: String): ResponseEntity<Product> {
+        val product = productService.getProductBySlug(slug)
+        return ResponseEntity.ok(product)
+    }
 
     @PostMapping
-    fun post() {}
+    fun createProduct(@RequestBody product: Product): ResponseEntity<Product> {
+        val createdProduct = productService.createProduct(product)
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct)
+    }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Int) {}
+    fun updateProduct(@PathVariable id: Long, @RequestBody product: Product): ResponseEntity<Product> {
+        val updatedProduct = productService.updateProduct(id, product)
+        return ResponseEntity.ok(updatedProduct)
+    }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Int) {}
-
+    fun deleteProduct(@PathVariable id: Long): ResponseEntity<Void> {
+        productService.deleteProduct(id)
+        return ResponseEntity.noContent().build()
+    }
 }
