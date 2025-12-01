@@ -20,6 +20,7 @@ data class Product(
     val format: String,
     val description: String,
     val slug: String,
+    var stock: Int,
 
     @ManyToOne
     @JoinColumn(name = "category_id")

@@ -22,10 +22,12 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.ServletException
 import java.io.IOException
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.core.AuthenticationException
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     private val customUserDetailsService: CustomUserDetailsService, // Inject CustomUserDetailsService
@@ -64,6 +66,7 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll() // Allow registration (POST)
                     .requestMatchers("/api/v1/products/**").permitAll() // Example: allow all product access
                     .requestMatchers("/api/v1/categories/**").permitAll() // Example: allow all category access
+                    .requestMatchers("/api/v1/orders/**").authenticated() // Authenticated users can access order endpoints
                     // Admin-only endpoints for users
                     .requestMatchers("/api/v1/users/**").hasRole("ADMIN") // All other /api/v1/users/** require ADMIN role
                     .anyRequest().authenticated()

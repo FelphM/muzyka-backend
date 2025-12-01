@@ -53,6 +53,7 @@ class ProductService(
             imageUrl = product.imageUrl,
             imageAlt = product.imageAlt,
             slug = product.slug,
+            stock = product.stock,
             category = category
         )
         return productRepository.save(updatedProduct)
