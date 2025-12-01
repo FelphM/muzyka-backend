@@ -21,21 +21,37 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-	implementation 'org.jetbrains.kotlin:kotlin-reflect'
-	implementation 'com.oracle.database.jdbc:ojdbc11-production:23.4.0.24.05'
-	runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
+    // --- INICIO CONFIGURACIÓN ORACLE ---
+    // Reemplaza la línea de 'ojdbc11-production' por estas 4 líneas específicas:
+    
+    // 1. El Driver JDBC
+    implementation 'com.oracle.database.jdbc:ojdbc11:23.4.0.24.05'
+    
+    // 2. Librerías de seguridad OBLIGATORIAS para usar Wallet
+	implementation 'com.oracle.database.jdbc:ojdbc11:21.9.0.0'
+    implementation 'com.oracle.database.security:oraclepki:21.9.0.0'
+    implementation 'com.oracle.database.security:osdt_cert:21.9.0.0'
+    implementation 'com.oracle.database.security:osdt_core:21.9.0.0'
+    // --- FIN CONFIGURACIÓN ORACLE ---
+
+    // Opcional: Comenta H2 para evitar que Spring intente usarlo si falla Oracle
+    // runtimeOnly 'com.h2database:h2'
+
     // JWT Dependencies
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+    
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5:1.9.24'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 kotlin {

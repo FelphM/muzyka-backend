@@ -22,12 +22,17 @@ data class User(
     val phone: String? = null,
     val address: String? = null,
     val city: String? = null,
+    @Column(name = "state_province")
     val stateProvince: String? = null,
+    @Column(name = "postal_code")
     val postalCode: String? = null,
     @JsonIgnore
+    @Column(name = "password_hash")
     val passwordHash: String, // Store password hash, not plain password
     val role: String, // e.g., "ADMIN", "CUSTOMER"
     val status: String, // e.g., "ACTIVE", "INACTIVE"
+    @Column(name = "join_date")
     val joinDate: Instant = Instant.now(),
+    @Column(name = "last_login")
     var lastLogin: Instant? = null
 )

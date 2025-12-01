@@ -72,8 +72,8 @@ class UserService(private val userRepository: UserRepository, private val passwo
             username = userRequest.username,
             email = userRequest.email,
             passwordHash = encodedPassword,
-            role = if (userRequest.email == "admin@gmail.com") "admin" else userRequest.role, // Temporarily assign admin role for testing
-            status = userRequest.status
+            role = if (userRequest.email == "admin@gmail.com") "admin" else userRequest.role.lowercase(), // normalize to lowercase to satisfy DB checks
+            status = userRequest.status.lowercase()
         )
         val savedUser = userRepository.save(newUser)
         logger.info("User created successfully with email: {} and ID: {}", savedUser.email, savedUser.id)
@@ -89,8 +89,8 @@ class UserService(private val userRepository: UserRepository, private val passwo
         val userToUpdate = existingUser.copy(
             username = userRequest.username ?: existingUser.username,
             email = userRequest.email ?: existingUser.email,
-            role = userRequest.role ?: existingUser.role,
-            status = userRequest.status ?: existingUser.status
+            role = userRequest.role?.lowercase() ?: existingUser.role,
+            status = userRequest.status?.lowercase() ?: existingUser.status
         )
         val savedUser = userRepository.save(userToUpdate)
         logger.info("User with ID: {} updated successfully.", savedUser.id)
