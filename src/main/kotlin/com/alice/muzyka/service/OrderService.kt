@@ -12,6 +12,7 @@ import com.alice.muzyka.repository.PurchaseOrderRepository
 import com.alice.muzyka.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 
 @Service
@@ -20,9 +21,14 @@ class OrderService(
     private val productRepository: ProductRepository,
     private val userRepository: UserRepository
 ) {
+    private val logger = LoggerFactory.getLogger(OrderService::class.java)
+
 
     @Transactional
     fun createOrder(orderRequest: OrderRequest): PurchaseOrderDto {
+        logger.info("Attempting to create order for user ID: {}", orderRequest.userId)
+        logger.debug("Order request: {}", orderRequest)
+
         val user = userRepository.findById(orderRequest.userId)
             .orElseThrow { NotFoundException("User with id ${orderRequest.userId} not found") }
 
@@ -40,6 +46,7 @@ class OrderService(
             // Decrement stock
             product.stock -= itemRequest.quantity
             productRepository.save(product)
+            logger.debug("Decremented stock for product {}. New stock: {}", product.name, product.stock)
 
             val itemPrice = BigDecimal.valueOf(product.price)
             preliminaryOrderItems.add(Triple(product, itemRequest.quantity, itemPrice))
@@ -51,6 +58,7 @@ class OrderService(
             totalPrice = totalPrice,
             status = "PENDING"
         )
+        logger.debug("New PurchaseOrder object before saving: {}", newOrder)
 
         val orderItems = preliminaryOrderItems.map { (product, quantity, price) ->
             OrderItem(
@@ -64,12 +72,24 @@ class OrderService(
         newOrder.items.addAll(orderItems)
 
         val savedOrder = purchaseOrderRepository.save(newOrder)
-        return toDto(savedOrder)
+        logger.info("Order created successfully with ID: {}", savedOrder.id)
+        logger.debug("Saved PurchaseOrder object: {}", savedOrder)
+        
+        val returnedDto = toDto(savedOrder)
+        logger.debug("Returned PurchaseOrderDto: {}", returnedDto)
+        return returnedDto
     }
 
     @Transactional(readOnly = true)
     fun getAllOrders(): List<PurchaseOrderDto> {
         return purchaseOrderRepository.findAll().map { toDto(it) }
+    }
+
+    @Transactional(readOnly = true)
+    fun getOrdersByUserId(userId: Long): List<PurchaseOrderDto> {
+        val user = userRepository.findById(userId)
+            .orElseThrow { NotFoundException("User with id $userId not found") }
+        return purchaseOrderRepository.findByUser(user).map { toDto(it) }
     }
 
     @Transactional
@@ -88,7 +108,7 @@ class OrderService(
             orderDate = order.orderDate,
             totalPrice = order.totalPrice,
             status = order.status,
-            userName = order.user.name,
+            userName = order.user.username,
             items = order.items.map {
                 OrderItemDto(
                     id = it.id,

@@ -17,8 +17,13 @@ data class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     @Column(unique = true)
-    val name: String,
+    val username: String,
     val email: String,
+    val phone: String? = null,
+    val address: String? = null,
+    val city: String? = null,
+    val stateProvince: String? = null,
+    val postalCode: String? = null,
     @JsonIgnore
     val passwordHash: String, // Store password hash, not plain password
     val role: String, // e.g., "ADMIN", "CUSTOMER"

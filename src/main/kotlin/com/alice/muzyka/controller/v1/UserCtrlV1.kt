@@ -6,6 +6,7 @@ import com.alice.muzyka.dto.UserCreateRequest
 import com.alice.muzyka.dto.UserUpdateRequest
 import com.alice.muzyka.dto.LoginRequest
 import com.alice.muzyka.dto.JwtResponse // Import JwtResponse
+import com.alice.muzyka.dto.ChangePasswordRequest // Import ChangePasswordRequest
 import com.alice.muzyka.security.JwtTokenProvider // Import JwtTokenProvider
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -61,6 +62,20 @@ class UserCtrlV1(
         }
     }
 
+    @PutMapping("/profile")
+    fun updateUserProfile(@RequestBody userProfileUpdateRequest: com.alice.muzyka.dto.UserProfileUpdateRequest): ResponseEntity<User> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val user = userService.findByEmail(userDetails.username)
+
+        if (user?.id == null) {
+            return ResponseEntity.notFound().build()
+        }
+        val userId: Long = user.id!!
+
+        val updatedUser = userService.updateUserProfile(userId, userProfileUpdateRequest)
+        return ResponseEntity.ok(updatedUser)
+    }
+
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtResponse> { // Change return type
         return try {
@@ -83,5 +98,15 @@ class UserCtrlV1(
         } catch (e: AuthenticationException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
+    }
+
+    @PostMapping("/change-password")
+    fun changePassword(@RequestBody changePasswordRequest: ChangePasswordRequest): ResponseEntity<Void> {
+        userService.changePassword(
+            changePasswordRequest.email,
+            changePasswordRequest.currentPassword,
+            changePasswordRequest.newPassword
+        )
+        return ResponseEntity.ok().build()
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.Instant
 import com.alice.muzyka.dto.UserCreateRequest
 import com.alice.muzyka.dto.UserUpdateRequest
+import org.springframework.transaction.annotation.Transactional
 
 import org.slf4j.LoggerFactory
 // ... (other imports)
@@ -49,7 +50,7 @@ class UserService(private val userRepository: UserRepository, private val passwo
     }
 
     fun findByUsername(username: String): User? {
-        return userRepository.findByName(username)
+        return userRepository.findByUsername(username)
     }
 
     fun getAllUsers(): List<User> {
@@ -68,7 +69,7 @@ class UserService(private val userRepository: UserRepository, private val passwo
         }
         val encodedPassword = passwordEncoder.encode(userRequest.password)
         val newUser = User(
-            name = userRequest.name,
+            username = userRequest.username,
             email = userRequest.email,
             passwordHash = encodedPassword,
             role = if (userRequest.email == "admin@gmail.com") "admin" else userRequest.role, // Temporarily assign admin role for testing
@@ -86,7 +87,7 @@ class UserService(private val userRepository: UserRepository, private val passwo
         val existingUser = userRepository.findById(id).orElseThrow { NotFoundException("User not found with ID: $id") }
         
         val userToUpdate = existingUser.copy(
-            name = userRequest.name ?: existingUser.name,
+            username = userRequest.username ?: existingUser.username,
             email = userRequest.email ?: existingUser.email,
             role = userRequest.role ?: existingUser.role,
             status = userRequest.status ?: existingUser.status
@@ -94,6 +95,24 @@ class UserService(private val userRepository: UserRepository, private val passwo
         val savedUser = userRepository.save(userToUpdate)
         logger.info("User with ID: {} updated successfully.", savedUser.id)
         logger.debug("Updated user details: {}", savedUser)
+        return savedUser
+    }
+
+    fun updateUserProfile(id: Long, userProfileUpdateRequest: com.alice.muzyka.dto.UserProfileUpdateRequest): User {
+        logger.info("Attempting to update user profile with ID: {}", id)
+        logger.debug("Received UserProfileUpdateRequest: {}", userProfileUpdateRequest)
+        val existingUser = userRepository.findById(id).orElseThrow { NotFoundException("User not found with ID: $id") }
+
+        val userToUpdate = existingUser.copy(
+            phone = userProfileUpdateRequest.phone ?: existingUser.phone,
+            address = userProfileUpdateRequest.address ?: existingUser.address,
+            city = userProfileUpdateRequest.city ?: existingUser.city,
+            stateProvince = userProfileUpdateRequest.stateProvince ?: existingUser.stateProvince,
+            postalCode = userProfileUpdateRequest.postalCode ?: existingUser.postalCode
+        )
+        val savedUser = userRepository.save(userToUpdate)
+        logger.info("User profile with ID: {} updated successfully.", savedUser.id)
+        logger.debug("Updated user profile details: {}", savedUser)
         return savedUser
     }
 
@@ -112,5 +131,23 @@ class UserService(private val userRepository: UserRepository, private val passwo
         val user = userRepository.findById(userId).orElseThrow { NotFoundException("User not found with ID: $userId") }
         user.lastLogin = Instant.now()
         return userRepository.save(user)
+    }
+
+    @Transactional
+    fun changePassword(email: String, currentPasswordPlain: String, newPasswordPlain: String) {
+        val user = userRepository.findByEmail(email) ?: throw NotFoundException("User with email $email not found")
+
+        if (!passwordEncoder.matches(currentPasswordPlain, user.passwordHash)) {
+            throw IllegalArgumentException("Current password is incorrect.")
+        }
+
+        if (currentPasswordPlain == newPasswordPlain) {
+            throw IllegalArgumentException("New password cannot be the same as the current password.")
+        }
+
+        val newPasswordHash = passwordEncoder.encode(newPasswordPlain)
+        val updatedUser = user.copy(passwordHash = newPasswordHash)
+        userRepository.save(updatedUser)
+        logger.info("Password changed successfully for user with email: {}", email)
     }
 }
