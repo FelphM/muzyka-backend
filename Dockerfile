@@ -23,4 +23,5 @@ COPY --from=build /app/build/libs/*.jar app.jar
 COPY --from=build /app/wallet ./wallet
 
 # Le decimos a Render que arranque la app usando el puerto que ellos nos asignen ($PORT)
-CMD ["java", "-Dserver.port=$PORT", "-jar", "app.jar"]
+# CAMBIO: Quitamos los corchetes [] para permitir que $PORT se lea correctamente
+CMD java -Dserver.port=$PORT -jar app.jar
