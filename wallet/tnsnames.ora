@@ -1,0 +1,12 @@
+muzykabd_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=gc6a1dfe66eab68_muzykabd_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+muzykabd_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=gc6a1dfe66eab68_muzykabd_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+muzykabd_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=gc6a1dfe66eab68_muzykabd_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+muzykabd_tp = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=gc6a1dfe66eab68_muzykabd_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+muzykabd_tpurgent = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=gc6a1dfe66eab68_muzykabd_tpurgent.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+
