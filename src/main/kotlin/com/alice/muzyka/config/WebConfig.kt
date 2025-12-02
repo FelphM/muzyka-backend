@@ -9,8 +9,13 @@ class WebConfig : WebMvcConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("*")
+            .allowedOrigins(
+                "http://localhost:5173",       // Tu React local
+                "https://muzyka.netlify.app",  // (Opcional) Tu futuro dominio en Netlify
+                "https://tu-app.onrender.com"  // (Opcional) Tu propio dominio de Render
+            )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")
+            .allowCredentials(true) // <--- ¡IMPORTANTE PARA EL LOGIN!
     }
 }

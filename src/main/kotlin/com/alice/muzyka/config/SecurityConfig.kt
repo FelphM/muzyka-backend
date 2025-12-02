@@ -24,6 +24,7 @@ import jakarta.servlet.ServletException
 import java.io.IOException
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.config.Customizer
 
 @Configuration
 @EnableWebSecurity
@@ -58,7 +59,7 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { csrf -> csrf.disable() }
-            .cors { } // Apply CORS configuration
+            .cors(Customizer.withDefaults()) // ✅ Apply CORS configuration using default resolver
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .exceptionHandling { exceptions -> exceptions.authenticationEntryPoint(jwtAuthenticationEntryPoint()) } // Add entry point
             .authorizeHttpRequests { auth ->
@@ -73,6 +74,7 @@ class SecurityConfig(
             }
             .authenticationProvider(authenticationProvider()) // Set authentication provider
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java) // Add JWT filter
+            .addFilterBefore(corsFilter(), CorsFilter::class.java) // ✅ Explicitly add CORS filter before other filters
             // Add other security configurations like JWT filters if needed later
         return http.build()
     }
