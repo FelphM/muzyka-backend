@@ -58,8 +58,8 @@ class SecurityConfig(
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
+            .cors(Customizer.withDefaults()) // Enable CORS
             .csrf { csrf -> csrf.disable() }
-            .cors(Customizer.withDefaults()) // ✅ Apply CORS configuration using default resolver
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .exceptionHandling { exceptions -> exceptions.authenticationEntryPoint(jwtAuthenticationEntryPoint()) } // Add entry point
             .authorizeHttpRequests { auth ->
