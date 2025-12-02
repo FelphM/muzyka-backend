@@ -95,9 +95,6 @@ class SecurityConfig(
                     // --- RUTAS PROTEGIDAS ---
                     .requestMatchers("/api/v1/orders/**").authenticated()
                     .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/blogposts").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/blogposts/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/blogposts/**").hasRole("ADMIN")
                     
                     // El resto requiere autenticación
                     .anyRequest().authenticated()
