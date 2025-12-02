@@ -77,16 +77,4 @@ class SecurityConfig(
             // Add other security configurations like JWT filters if needed later
         return http.build()
     }
-
-    @Bean
-    fun corsFilter(): CorsFilter {
-        val source = UrlBasedCorsConfigurationSource()
-        val config = CorsConfiguration()
-        config.allowCredentials = true
-        config.addAllowedOrigin("http://localhost:5173") // Allow your frontend origin
-        config.addAllowedHeader("*")
-        config.addAllowedMethod("*")
-        source.registerCorsConfiguration("/**", config)
-        return CorsFilter(source)
-    }
 }
