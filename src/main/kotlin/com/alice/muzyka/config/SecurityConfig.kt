@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 import com.alice.muzyka.security.JwtAuthenticationFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -53,6 +54,25 @@ class SecurityConfig(
         return AuthenticationEntryPoint { request: HttpServletRequest?, response: HttpServletResponse, authException: AuthenticationException? ->
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
         }
+    }
+
+// --- NUEVO: Fuente de Configuración CORS explícita ---
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        // Permite orígenes específicos (cambia el * por tus URLs reales si quieres más seguridad después)
+        configuration.allowedOriginPatterns = listOf(
+            "http://localhost:5173",
+            "https://*.netlify.app",
+            "https://*.onrender.com"
+        )
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD")
+        configuration.allowedHeaders = listOf("*")
+        configuration.allowCredentials = true
+        
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 
     @Bean
