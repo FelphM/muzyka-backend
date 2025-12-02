@@ -84,8 +84,6 @@ class SecurityConfig(
             .exceptionHandling { it.authenticationEntryPoint(jwtAuthenticationEntryPoint()) }
             .authorizeHttpRequests { auth ->
                 auth
-                    // Permitir todas las peticiones OPTIONS (preflight de CORS)
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     // --- RUTAS PÚBLICAS (Sin Login) ---
                     .requestMatchers("/api/v1/users/login", "/api/v1/users/register").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
