@@ -89,6 +89,7 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/blogposts/**").permitAll()
                     
                     // --- RUTAS PROTEGIDAS ---
                     .requestMatchers("/api/v1/orders/**").authenticated()
