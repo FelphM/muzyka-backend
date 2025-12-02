@@ -11,8 +11,8 @@ class WebConfig : WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins(
                 "http://localhost:5173",       // Tu React local
-                "https://muzyka.netlify.app",  // (Opcional) Tu futuro dominio en Netlify
-                "https://tu-app.onrender.com"  // (Opcional) Tu propio dominio de Render
+                "https://jovial-caramel-4807a9.netlify.app",  // (Opcional) Tu futuro dominio en Netlify
+                "https://muzyka-backend.onrender.com"  // (Opcional) Tu propio dominio de Render
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")
