@@ -13,10 +13,10 @@ class ProductService(
     private val categoryRepository: CategoryRepository
 ) {
 
-    fun getAllProducts(): List<Product> = productRepository.findAll()
+    fun getAllProducts(): List<Product> = productRepository.findAllByDeletedFalse()
 
     fun getProductBySlug(slug: String): Product {
-        return productRepository.findBySlug(slug) ?: throw NotFoundException("Product with slug $slug not found")
+        return productRepository.findBySlugAndDeletedFalse(slug) ?: throw NotFoundException("Product with slug $slug not found")
     }
 
     fun createProduct(product: Product): Product {
@@ -60,9 +60,10 @@ class ProductService(
     }
 
     fun deleteProduct(id: Long) {
-        if (!productRepository.existsById(id)) {
-            throw NotFoundException("Product with id $id not found")
-        }
-        productRepository.deleteById(id)
+        val product = productRepository.findById(id)
+            .orElseThrow { NotFoundException("Product with id $id not found") }
+        
+        val updatedProduct = product.copy(deleted = true)
+        productRepository.save(updatedProduct)
     }
 }

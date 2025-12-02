@@ -28,5 +28,8 @@ data class Product(
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    val category: Category
+    val category: Category,
+
+    @Column(nullable = false)
+    val deleted: Boolean = false
 )

@@ -1,5 +1,6 @@
 package com.alice.muzyka.entity
 
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -11,5 +12,7 @@ data class Category(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     val name: String,
-    val description: String
+    val description: String,
+    @Column(nullable = false)
+    val deleted: Boolean = false
 )

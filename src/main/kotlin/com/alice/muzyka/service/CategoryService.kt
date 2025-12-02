@@ -4,20 +4,28 @@ import com.alice.muzyka.entity.Category
 import com.alice.muzyka.exception.ConflictException
 import com.alice.muzyka.exception.NotFoundException
 import com.alice.muzyka.repository.CategoryRepository
+import com.alice.muzyka.repository.ProductRepository
 import org.springframework.stereotype.Service
 
 @Service
-class CategoryService(private val categoryRepository: CategoryRepository) {
+class CategoryService(
+    private val categoryRepository: CategoryRepository,
+    private val productRepository: ProductRepository
+    ) {
 
-    fun getAllCategories(): List<Category> = categoryRepository.findAll()
+    fun getAllCategories(): List<Category> = categoryRepository.findAllByDeletedFalse()
 
     fun getCategoryById(id: Long): Category {
-        return categoryRepository.findById(id)
+        val category = categoryRepository.findById(id)
             .orElseThrow { NotFoundException("Category with id $id not found") }
+        if (category.deleted) {
+            throw NotFoundException("Category with id $id not found")
+        }
+        return category
     }
 
     fun getCategoryByName(name: String): Category {
-        return categoryRepository.findByName(name) ?: throw NotFoundException("Category with name $name not found")
+        return categoryRepository.findByNameAndDeletedFalse(name) ?: throw NotFoundException("Category with name $name not found")
     }
 
     fun createCategory(category: Category): Category {
@@ -45,9 +53,16 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
     }
 
     fun deleteCategory(id: Long) {
-        if (!categoryRepository.existsById(id)) {
-            throw NotFoundException("Category with id $id not found")
+        val category = categoryRepository.findById(id)
+            .orElseThrow { NotFoundException("Category with id $id not found") }
+        
+        val productsInCategory = productRepository.findByCategoryIdAndDeletedFalse(id)
+        if (productsInCategory.isNotEmpty()) {
+            val productNames = productsInCategory.map { it.name }
+            throw ConflictException("Category with id $id has associated products and cannot be deleted.", productNames)
         }
-        categoryRepository.deleteById(id)
+
+        val updatedCategory = category.copy(deleted = true)
+        categoryRepository.save(updatedCategory)
     }
 }
