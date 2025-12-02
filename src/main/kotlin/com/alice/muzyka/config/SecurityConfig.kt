@@ -74,7 +74,6 @@ class SecurityConfig(
             }
             .authenticationProvider(authenticationProvider()) // Set authentication provider
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java) // Add JWT filter
-            .addFilterBefore(corsFilter(), CorsFilter::class.java) // ✅ Explicitly add CORS filter before other filters
             // Add other security configurations like JWT filters if needed later
         return http.build()
     }
