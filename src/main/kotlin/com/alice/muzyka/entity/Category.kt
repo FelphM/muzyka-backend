@@ -12,7 +12,4 @@ data class Category(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     val name: String,
-    val description: String,
-    @Column(nullable = false)
-    val deleted: Boolean = false
-)
+    val description: String)

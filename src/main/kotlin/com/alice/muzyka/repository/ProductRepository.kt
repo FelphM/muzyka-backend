@@ -10,4 +10,5 @@ interface ProductRepository : JpaRepository<Product, Long> {
     fun findBySlugAndDeletedFalse(slug: String): Product?
     fun findAllByDeletedFalse(): List<Product>
     fun findByCategoryIdAndDeletedFalse(categoryId: Long): List<Product>
+    fun findByCategoryId(categoryId: Long): List<Product>
 }
