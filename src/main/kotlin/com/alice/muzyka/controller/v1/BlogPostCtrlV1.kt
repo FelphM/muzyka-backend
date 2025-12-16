@@ -2,6 +2,7 @@ package com.alice.muzyka.controller.v1
 
 import com.alice.muzyka.entity.BlogPost
 import com.alice.muzyka.service.BlogPostService
+import com.alice.muzyka.dto.BlogPostCreateRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -27,8 +28,8 @@ class BlogPostCtrlV1(private val blogPostService: BlogPostService) {
     }
 
     @PostMapping
-    fun createBlogPost(@RequestBody blogPost: BlogPost): ResponseEntity<BlogPost> {
-        val createdBlogPost = blogPostService.createBlogPost(blogPost)
+    fun createBlogPost(@RequestBody blogPostRequest: BlogPostCreateRequest): ResponseEntity<BlogPost> {
+        val createdBlogPost = blogPostService.createBlogPost(blogPostRequest)
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBlogPost)
     }
 
