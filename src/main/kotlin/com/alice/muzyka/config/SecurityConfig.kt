@@ -89,6 +89,7 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/blogposts/**").permitAll()
                     
                     // --- RUTAS DE USUARIO AUTENTICADO ---
                     // Permitir a cualquier usuario autenticado cambiar su contraseña o perfil
@@ -101,6 +102,9 @@ class SecurityConfig(
                     // El resto de las rutas de /users/ requieren rol de ADMIN
                     .requestMatchers("/api/v1/orders/**").authenticated()
                     .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/blogposts").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/blogposts/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/blogposts/**").hasRole("ADMIN")
                     
                     // El resto requiere autenticación
                     .anyRequest().authenticated()
