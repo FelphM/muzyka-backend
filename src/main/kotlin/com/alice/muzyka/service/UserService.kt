@@ -103,7 +103,16 @@ class UserService(private val userRepository: UserRepository, private val passwo
         logger.debug("Received UserProfileUpdateRequest: {}", userProfileUpdateRequest)
         val existingUser = userRepository.findById(id).orElseThrow { NotFoundException("User not found with ID: $id") }
 
+        // Handle username update separately to include validation
+        val newUsername = userProfileUpdateRequest.username
+        if (newUsername != null && newUsername != existingUser.username) {
+            if (userRepository.findByUsername(newUsername) != null) {
+                throw ConflictException("Username '$newUsername' is already taken.")
+            }
+        }
+
         val userToUpdate = existingUser.copy(
+            username = newUsername ?: existingUser.username,
             phone = userProfileUpdateRequest.phone ?: existingUser.phone,
             address = userProfileUpdateRequest.address ?: existingUser.address,
             city = userProfileUpdateRequest.city ?: existingUser.city,

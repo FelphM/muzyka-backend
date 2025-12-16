@@ -95,6 +95,7 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/api/v1/users/change-password").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/api/v1/users/profile").authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/v1/users/email/{email}").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/users/profile").authenticated()
 
                     // --- RUTAS PROTEGIDAS (ADMIN) ---
                     // El resto de las rutas de /users/ requieren rol de ADMIN

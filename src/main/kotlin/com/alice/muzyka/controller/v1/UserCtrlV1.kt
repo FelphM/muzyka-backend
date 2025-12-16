@@ -76,6 +76,20 @@ class UserCtrlV1(
         return ResponseEntity.ok(updatedUser)
     }
 
+    @DeleteMapping("/profile")
+    fun deleteUserProfile(): ResponseEntity<Void> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val user = userService.findByEmail(userDetails.username)
+
+        if (user?.id == null) {
+            return ResponseEntity.notFound().build()
+        }
+        val userId: Long = user.id!!
+
+        userService.deleteUser(userId)
+        return ResponseEntity.noContent().build()
+    }
+
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtResponse> { // Change return type
         return try {
