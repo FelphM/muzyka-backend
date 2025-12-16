@@ -25,7 +25,6 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        println("JWT FILTER HIT: " + request.requestURI) // DEBUGGING LINE
         try {
             val jwt = getJwtFromRequest(request)
 

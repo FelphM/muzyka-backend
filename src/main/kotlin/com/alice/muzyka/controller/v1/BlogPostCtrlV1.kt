@@ -3,6 +3,7 @@ package com.alice.muzyka.controller.v1
 import com.alice.muzyka.entity.BlogPost
 import com.alice.muzyka.service.BlogPostService
 import com.alice.muzyka.dto.BlogPostCreateRequest
+import com.alice.muzyka.dto.BlogPostUpdateRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -34,8 +35,8 @@ class BlogPostCtrlV1(private val blogPostService: BlogPostService) {
     }
 
     @PutMapping("/{id}")
-    fun updateBlogPost(@PathVariable id: String, @RequestBody blogPost: BlogPost): ResponseEntity<BlogPost> {
-        val updatedBlogPost = blogPostService.updateBlogPost(id, blogPost)
+    fun updateBlogPost(@PathVariable id: String, @RequestBody blogPostRequest: BlogPostUpdateRequest): ResponseEntity<BlogPost> {
+        val updatedBlogPost = blogPostService.updateBlogPost(id, blogPostRequest)
         return if (updatedBlogPost != null) {
             ResponseEntity.ok(updatedBlogPost)
         } else {

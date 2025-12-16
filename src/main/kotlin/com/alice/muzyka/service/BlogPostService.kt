@@ -36,13 +36,21 @@ class BlogPostService(private val blogPostRepository: BlogPostRepository) {
         return blogPostRepository.save(newBlogPost)
     }
 
-    fun updateBlogPost(id: String, updatedBlogPost: BlogPost): BlogPost? {
-        return if (blogPostRepository.existsById(id)) {
-            val blogPostToUpdate = updatedBlogPost.copy(id = id)
-            blogPostRepository.save(blogPostToUpdate)
-        } else {
-            null
-        }
+    fun updateBlogPost(id: String, request: com.alice.muzyka.dto.BlogPostUpdateRequest): BlogPost? {
+        val existingPost = blogPostRepository.findById(id).orElse(null) ?: return null
+
+        val updatedPost = existingPost.copy(
+            bannerSrc = request.bannerSrc,
+            bannerAlt = request.bannerAlt,
+            cardTitle = request.cardTitle,
+            cardAuthor = request.cardAuthor,
+            cardDate = request.cardDate,
+            cardBrief = request.cardBrief,
+            postTitle = request.postTitle,
+            postContent = request.postContent
+        )
+
+        return blogPostRepository.save(updatedPost)
     }
 
     fun deleteBlogPost(id: String) {
