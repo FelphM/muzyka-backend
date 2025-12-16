@@ -13,10 +13,16 @@ class BlogPostService(private val blogPostRepository: BlogPostRepository) {
     fun getBlogPostById(id: String): BlogPost? = blogPostRepository.findById(id).orElse(null)
 
     fun createBlogPost(blogPost: BlogPost): BlogPost {
-        // Ensure the ID is unique, generate if not provided or exists
-        // For simplicity, let's assume the ID is provided by the client for now,
-        // or we could generate a UUID here if needed.
-        return blogPostRepository.save(blogPost)
+        // Generate a unique ID on the backend
+        val slug = blogPost.cardTitle.lowercase()
+            .replace(Regex("[^a-z0-9\\s-]"), "")
+            .replace(Regex("[\\s-]+"), "-")
+        val randomSuffix = (1..6).map { (('a'..'z') + ('0'..'9')).random() }.joinToString("")
+        val uniqueId = "$slug-$randomSuffix"
+
+        val newBlogPost = blogPost.copy(id = uniqueId)
+        
+        return blogPostRepository.save(newBlogPost)
     }
 
     fun updateBlogPost(id: String, updatedBlogPost: BlogPost): BlogPost? {
