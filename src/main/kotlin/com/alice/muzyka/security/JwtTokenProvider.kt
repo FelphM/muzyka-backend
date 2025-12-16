@@ -39,9 +39,7 @@ class JwtTokenProvider {
 
     fun generateToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as User
-        val roles = userPrincipal.authorities.stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.joining(","))
+        val roles = userPrincipal.authorities.map { it.authority }
 
         val now = Date()
         val expiryDate = Date(now.time + jwtExpirationInMs)
@@ -90,9 +88,10 @@ class JwtTokenProvider {
             .body
 
         val username = claims.subject
-        val roles = (claims["roles"] as String).split(",")
-            .map { SimpleGrantedAuthority(it) }
-            .toList()
+        
+        @Suppress("UNCHECKED_CAST")
+        val rolesList = claims["roles"] as? List<String> ?: listOf()
+        val roles = rolesList.map { SimpleGrantedAuthority(it) }.toList()
 
         val userPrincipal = User(username, "", roles) // Password not needed here
         return UsernamePasswordAuthenticationToken(userPrincipal, "", roles)
